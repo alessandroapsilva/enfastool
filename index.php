@@ -1,7 +1,6 @@
 <?php
 
-/**
- * Minimal plugin bootstrap placeholder for GLPI 11.
- *
- * This file will be expanded with the real plugin entrypoints and hooks.
- */
+if (!defined('GLPI_ROOT')) {
+   http_response_code(403);
+   exit;
+}
