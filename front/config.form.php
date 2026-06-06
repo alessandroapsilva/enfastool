@@ -24,7 +24,7 @@ $config = PluginEnfastoolConfig::getAll();
 
 Html::header(__('EnfasTool - Login', 'enfastool'), $_SERVER['PHP_SELF'], 'config', 'plugins');
 
-echo "<form method='post' action='" . htmlspecialchars($_SERVER['PHP_SELF']) . "' enctype='multipart/form-data' class='center'>";
+echo "<form method='post' action='' enctype='multipart/form-data' class='center'>";
 echo "<div class='card'>";
 echo "<div class='card-header'><h2>" . __('Personalização da tela de login', 'enfastool') . "</h2></div>";
 echo "<div class='card-body'>";

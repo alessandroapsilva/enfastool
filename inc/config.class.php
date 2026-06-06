@@ -122,12 +122,28 @@ class PluginEnfastoolConfig {
       }
 
       $extension = strtolower(pathinfo((string) ($file['name'] ?? ''), PATHINFO_EXTENSION));
-      if (!in_array($extension, ['png', 'jpg', 'jpeg', 'webp', 'gif', 'svg'], true)) {
+      if (!in_array($extension, ['png', 'jpg', 'jpeg', 'webp', 'gif'], true)) {
+         return $fallback;
+      }
+
+      $allowedMimes = [
+         'png'  => ['image/png'],
+         'jpg'  => ['image/jpeg'],
+         'jpeg' => ['image/jpeg'],
+         'webp' => ['image/webp'],
+         'gif'  => ['image/gif'],
+      ];
+      $mime = self::detectMimeType($tmpName);
+      if ($mime === '' || !in_array($mime, $allowedMimes[$extension], true)) {
+         return $fallback;
+      }
+
+      if (@getimagesize($tmpName) === false) {
          return $fallback;
       }
 
       $directory = self::getPublicPluginFilesDirectory();
-      if (!is_dir($directory) && !mkdir($directory, 0775, true) && !is_dir($directory)) {
+      if (!is_dir($directory) && !mkdir($directory, 0755, true) && !is_dir($directory)) {
          return $fallback;
       }
 
@@ -158,5 +174,28 @@ class PluginEnfastoolConfig {
    private static function getPublicPluginFilesUrl(): string {
       global $CFG_GLPI;
       return rtrim($CFG_GLPI['root_doc'] ?? '', '/') . '/files/_plugins/enfastool';
+   }
+
+   private static function detectMimeType(string $path): string {
+      if (!is_readable($path)) {
+         return '';
+      }
+
+      if (function_exists('finfo_open')) {
+         $finfo = finfo_open(FILEINFO_MIME_TYPE);
+         if ($finfo !== false) {
+            $mime = finfo_file($finfo, $path);
+            finfo_close($finfo);
+            if (is_string($mime)) {
+               return $mime;
+            }
+         }
+      }
+
+      if (function_exists('mime_content_type')) {
+         return (string) mime_content_type($path);
+      }
+
+      return '';
    }
 }

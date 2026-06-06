@@ -30,8 +30,11 @@
 
    function applyBackground(cfg) {
       if (cfg.background_type === 'image' && cfg.background_image) {
-         document.body.style.backgroundImage = `url("${cssEscapeUrl(cfg.background_image)}")`;
-         return;
+         const safeUrl = toSafeCssUrl(cfg.background_image);
+         if (safeUrl) {
+            document.body.style.backgroundImage = `url("${safeUrl}")`;
+            return;
+         }
       }
 
       if (cfg.background_type === 'solid') {
@@ -109,7 +112,16 @@
          || null;
    }
 
-   function cssEscapeUrl(url) {
-      return String(url).replace(/"/g, '\\"');
+   function toSafeCssUrl(url) {
+      const value = String(url).trim();
+      if (!value || /["'()`\\\r\n]/.test(value)) {
+         return '';
+      }
+
+      if (value.startsWith('/') || value.startsWith('http://') || value.startsWith('https://')) {
+         return value;
+      }
+
+      return '';
    }
 })();

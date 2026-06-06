@@ -65,5 +65,5 @@ function plugin_enfastool_is_login_page(): bool {
    $script = $_SERVER['SCRIPT_NAME'] ?? '';
    $basename = basename($script);
 
-   return $basename === 'login.php' || $script === '/index.php' || str_ends_with($script, '/front/login.php');
+   return $basename === 'login.php' || str_ends_with($script, '/front/login.php');
 }
